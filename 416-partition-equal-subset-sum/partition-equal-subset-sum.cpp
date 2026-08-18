@@ -17,14 +17,14 @@ public:
         int sum = accumulate(nums.begin(), nums.end(), 0);
         if (sum % 2 != 0)
             return false;
-        vector<int> dp(sum + 1, 0);
+        vector<int> dp(sum / 2 + 1, 0);
         dp[sum / 2] = 1;
         for (int indx = nums.size() - 1; indx >= 0; indx--) {
             vector<int> curr(sum + 1, 0);
-            for (int d = 0; d <= sum/2; d++) {
+            for (int d = 0; d <= sum / 2; d++) {
                 int notake = dp[d];
                 int take = 0;
-                if (nums[indx] + d <= sum) {
+                if (nums[indx] + d <= sum / 2) {
                     take = dp[nums[indx] + d];
                 }
                 curr[d] = take || notake;
