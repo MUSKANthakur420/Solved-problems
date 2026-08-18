@@ -21,7 +21,7 @@ public:
         dp[sum / 2] = 1;
         for (int indx = nums.size() - 1; indx >= 0; indx--) {
             vector<int> curr(sum + 1, 0);
-            for (int d = 0; d <= sum; d++) {
+            for (int d = 0; d <= sum/2; d++) {
                 int notake = dp[d];
                 int take = 0;
                 if (nums[indx] + d <= sum) {
