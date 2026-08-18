@@ -15,7 +15,20 @@ public:
     }
     bool canPartition(vector<int>& nums) {
         int sum = accumulate(nums.begin(), nums.end(), 0);
-        vector<vector<int>> dp(nums.size(), vector<int>(sum + 1, -1));
-        return solve(0, sum, 0, nums.size(), nums, dp);
+        if (sum % 2 != 0)
+            return false;
+        vector<vector<int>> dp(nums.size() + 1, vector<int>(sum + 1, 0));
+        dp[nums.size()][sum / 2] = 1;
+        for (int indx = nums.size() - 1; indx >= 0; indx--) {
+            for (int d = 0; d <= sum; d++) {
+                int notake = dp[indx + 1][d];
+                int take = 0;
+                if (nums[indx] + d <= sum) {
+                    take = dp[indx + 1][nums[indx] + d];
+                }
+                dp[indx][d] = take || notake;
+            }
+        }
+        return dp[0][0];
     }
 };
