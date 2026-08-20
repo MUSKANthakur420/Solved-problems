@@ -19,8 +19,17 @@ public:
     int coinChange(vector<int>& coins, int amount) {
         if (amount == 0)
             return 0;
-        vector<vector<int>> dp(coins.size(), vector<int>(amount + 1, -1));
-        solve(0, coins, amount, 0LL, dp);
-        return dp[0][0] == 1e9 ? -1 : dp[0][0];
+        vector<int> dp(amount + 1, 1e9);
+        dp[amount] = 0;
+        for (int indx = coins.size() - 1; indx >= 0; indx--) {
+            for (long long sum = amount; sum >= 0; sum--) {
+                int notake = dp[sum];
+                int take = 1e9;
+                if (sum + coins[indx] <= amount)
+                    take = dp[sum + coins[indx]] + 1;
+                dp[sum] = min(take, notake);
+            }
+        }
+        return dp[0] == 1e9 ? -1 : dp[0];
     }
 };
