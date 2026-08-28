@@ -19,31 +19,22 @@ public:
         return dp[indx][flag][t] = max(take, notake);
     }
     int maxProfit(vector<int>& prices) {
-        vector<vector<vector<int>>> dp(
-            prices.size() + 1, vector<vector<int>>(3, vector<int>(3, -1)));
-        for (int i = 0; i < prices.size(); i++) {
-            for (int j = 0; j <= 1; j++)
-                dp[i][j][2] = 0;
-        }
-        for (int j = 0; j <= 1; j++) {
-            for (int t = 0; t <= 2; t++)
-                dp[prices.size()][j][t] = 0;
-        }
+
+        vector<vector<int>> dp(2, vector<int>(3, 0));
         for (int i = prices.size() - 1; i >= 0; i--) {
             for (int j = 1; j >= 0; j--) {
                 for (int t = 1; t >= 0; t--) {
                     int take = 0, notake = 0;
                     if (j) {
-                        take =
-                            max(-prices[i] + dp[i + 1][0][t], dp[i + 1][1][t]);
+                        take = max(-prices[i] + dp[0][t], dp[1][t]);
                     } else
-                        notake = max(prices[i] + dp[i + 1][1][t + 1],
-                                     dp[i + 1][0][t]);
+                        notake = max(prices[i] + dp[1][t + 1], dp[0][t]);
 
-                    dp[i][j][t] = max(take, notake);
+                    dp[j][t] = max(take, notake);
                 }
+                // dp = curr;
             }
         }
-        return max({dp[0][1][0], dp[0][1][1]});
+        return max({dp[1][0], dp[1][1]});
     }
 };
