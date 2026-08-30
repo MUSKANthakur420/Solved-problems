@@ -35,7 +35,7 @@ public:
         vector<int> dp(words.size() + 1, 0);
         for (int indx = words.size() - 1; indx >= 0; indx--) {
             vector<int> curr(words.size() + 1, 0);
-            for (int prev = words.size() - 1; prev >= -1; prev--) {
+            for (int prev = indx - 1; prev >= -1; prev--) {
                 int take = 0, notake = 0;
                 if (prev == -1)
                     take = 1 + dp[indx + 1];
