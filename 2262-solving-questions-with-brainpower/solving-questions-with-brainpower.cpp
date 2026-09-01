@@ -11,7 +11,16 @@ public:
         return dp[indx] = max(take, notake);
     }
     long long mostPoints(vector<vector<int>>& arr) {
-        vector<long long> dp(arr.size() + 1, -1LL);
-        return solve(0, arr, dp);
+        vector<long long> dp(arr.size() + 2, 0LL);
+        for (int i = arr.size() - 1; i >= 0; i--) {
+            long long take = 0LL, notake = 0LL;
+            notake = dp[i + 1];
+            if (i + arr[i][1] + 1 < arr.size())
+                take = arr[i][0] + dp[i + arr[i][1] + 1];
+            else
+                take = arr[i][0];
+            dp[i] = max(take, notake);
+        }
+        return dp[0];
     }
 };
