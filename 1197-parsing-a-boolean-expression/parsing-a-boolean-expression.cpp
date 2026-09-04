@@ -1,43 +1,41 @@
 class Solution {
 public:
-    bool parseBoolExpr(string s) {
+    bool parseBoolExpr(string exp) {
         stack<char> st;
-        for (int i = 0; i < s.size();) {
-            if (s[i] == ',') {
+        for (int i = 0; i < exp.size();) {
+            if (exp[i] == ',') {
                 i++;
-            } else if (s[i] != ')') {
-                st.push(s[i]);
+                // continue;
+            }
+            if (exp[i] != ')') {
+                st.push(exp[i]);
                 i++;
+                // continue;
             } else {
-                string res = "";
+                bool final = false;
+                string form = "";
                 while (!st.empty() && st.top() != '(') {
-                    res.push_back(st.top());
+                    form += st.top();
                     st.pop();
                 }
                 st.pop();
                 char op = st.top();
                 st.pop();
-                bool ans;
                 if (op == '&') {
-                    ans = true;
-
-                    for (auto it : res) {
-                        ans = ans && (it == 't');
+                    final = true;
+                    for (auto it : form) {
+                        final = final & (it == 'f' ? false : true);
+                    }
+                } else if (op == '|') {
+                    for (auto it : form) {
+                        final = final | (it == 'f' ? false : true);
+                    }
+                } else {
+                    for (auto it : form) {
+                        final = !(it == 'f' ? false : true);
                     }
                 }
-
-                else if (op == '|') {
-                    ans = false;
-
-                    for (auto it : res) {
-                        ans = ans || (it == 't');
-                    }
-                }
-
-                else {
-                    ans = !(res[0] == 't');
-                }
-                st.push(ans == 1 ? 't' : 'f');
+                st.push(final ? 't' : 'f');
                 i++;
             }
         }
