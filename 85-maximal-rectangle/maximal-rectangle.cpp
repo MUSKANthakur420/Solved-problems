@@ -23,14 +23,14 @@ public:
         return maxi;
     }
     int maximalRectangle(vector<vector<char>>& matrix) {
-        vector<int> ans(matrix[0].size(), 0);
+        vector<int> ans(matrix.size(), 0);
         int maxi = INT_MIN;
-        for (int i = 0; i < matrix.size(); i++) {
-            for (int j = 0; j < matrix[0].size(); j++) {
+        for (int j = 0; j < matrix[0].size(); j++) {
+            for (int i = 0; i < matrix.size(); i++) {
                 if (matrix[i][j] == '1')
-                    ans[j]++;
+                    ans[i]++;
                 else
-                    ans[j] = 0;
+                    ans[i] = 0;
             }
             maxi = max(maxi, largestRectangleArea(ans));
         }
