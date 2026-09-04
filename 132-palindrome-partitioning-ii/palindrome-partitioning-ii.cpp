@@ -1,14 +1,18 @@
 class Solution {
 public:
     bool ispal(string s) {
-        string rev = s;
-        reverse(rev.begin(), rev.end());
-        return rev == s;
+        int i = 0, j = s.size() - 1;
+        while (i < j) {
+            if (s[i] != s[j])
+                return false;
+            i++;
+            j--;
+        }
+        return true;
     }
     int minCut(string s) {
         vector<int> dp(s.size() + 1, 0);
         vector<vector<int>> pal(s.size() + 1, vector<int>(s.size() + 1, 0));
-
         for (int i = s.size() - 1; i >= 0; i--) {
             for (int j = i; j < s.size(); j++) {
                 if (s[i] == s[j] && (j - i <= 1 || pal[i + 1][j - 1])) {
@@ -16,22 +20,17 @@ public:
                 }
             }
         }
-
         for (int i = s.size() - 1; i >= 0; i--) {
-            int minicut = 1e9;
-            for (int j = i; j <= s.size() - 1; j++) {
+            int mini = 1e9;
+            for (int j = i; j < s.size(); j++) {
+                int cost = 0;
                 if (pal[i][j]) {
-                    int cut;
-                    if (j == s.size() - 1)
-                        cut = 0;
-                    else
-                        cut = 1 + dp[j + 1];
-                    minicut = min(minicut, cut);
+                    cost = 1 + dp[j + 1];
+                    mini = min(mini, cost);
                 }
-                // dp[j] = minicut;
             }
-            dp[i] = minicut;
+            dp[i] = mini;
         }
-        return dp[0];
+        return dp[0] - 1;
     }
 };
