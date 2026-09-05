@@ -2,14 +2,14 @@ class Solution {
 public:
     int largestRectangleArea(vector<int>& arr) {
         stack<int> st;
-        int maxi = 0;
+        int area = INT_MIN;
         for (int i = 0; i < arr.size(); i++) {
             while (!st.empty() && arr[st.top()] > arr[i]) {
                 int ele = st.top();
                 st.pop();
-                int pse = (st.empty() ? -1 : st.top());
                 int nse = i;
-                maxi = max(maxi, arr[ele] * (nse - pse - 1));
+                int pse = (st.empty() ? -1 : st.top());
+                area = max(area, arr[ele] * (nse - pse - 1));
             }
             st.push(i);
         }
@@ -18,8 +18,8 @@ public:
             int ele = st.top();
             st.pop();
             int pse = (st.empty() ? -1 : st.top());
-            maxi = max(maxi, arr[ele] * (nse - pse - 1));
+            area = max(area, arr[ele] * (nse - pse - 1));
         }
-        return maxi;
+        return area;
     }
 };
