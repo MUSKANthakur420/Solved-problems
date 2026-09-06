@@ -4,31 +4,28 @@ public:
               vector<vector<vector<int>>>& dp) {
         if (i == nums.size())
             return 0;
-        int a = 1e9, b = 1e9, c = 1e9;
+        if (op1 < 0 && op2 < 0)
+            return 0;
         if (dp[i][op1][op2] != -1)
             return dp[i][op1][op2];
+        int a = 1e9, b = 1e9, c = 1e9;
         if (op1 > 0 && op2 > 0) {
-            if (nums[i] >= k) {
-                int x1 = (nums[i] - k + 1) / 2;
-                a = min(a, x1);
+            if (nums[i] >= k)
+                a = min(a, (nums[i] - k + 1) / 2) +
+                    solve(i + 1, nums, k, op1 - 1, op2 - 1, dp);
+            if ((nums[i] + 1) / 2 >= k) {
+                a = min(a, (nums[i] + 1) / 2 - k) +
+                    solve(i + 1, nums, k, op1 - 1, op2 - 1, dp);
             }
-            int half = (nums[i] + 1) / 2;
-            if (half >= k) {
-                int x2 = half - k;
-                a = min(a, x2);
-            }
-
-            if (a != 1e9)
-                a += solve(i + 1, nums, k, op1 - 1, op2 - 1, dp);
         }
         if (op1 > 0) {
-            b = (nums[i] + 1) / 2 + solve(i + 1, nums, k, op1 - 1, op2, dp);
+            int val = (nums[i] + 1) / 2;
+            b = val + solve(i + 1, nums, k, op1 - 1, op2, dp);
         }
-        if (op2 > 0 && nums[i] >= k) {
+        if (nums[i] >= k && op2 > 0) {
             c = (nums[i] - k) + solve(i + 1, nums, k, op1, op2 - 1, dp);
         }
         int d = nums[i] + solve(i + 1, nums, k, op1, op2, dp);
-
         return dp[i][op1][op2] = min({a, b, c, d});
     }
     int minArraySum(vector<int>& nums, int k, int op1, int op2) {
