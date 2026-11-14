@@ -1,23 +1,22 @@
 class Solution {
 public:
-    int findNumberOfLIS(vector<int>& arr) {
-        vector<int> dp(arr.size() + 1, 1);
-        vector<int> cnt(arr.size() + 1, 1);
-        int maxi = 1;
-        for (int i = 0; i < arr.size(); i++) {
-            for (int j = 0; j < i; j++) {
-                int take = 0, notake = 0;
-                if (arr[i] > arr[j] && dp[j] + 1 > dp[i]) {
-                    dp[i] = dp[j] + 1;
-                    cnt[i] = cnt[j];
-                } else if (arr[i] > arr[j] && dp[j] + 1 == dp[i])
-                    cnt[i] += cnt[j];
+    int findNumberOfLIS(vector<int>& nums) {
+        vector<int> dp1(nums.size(), 1);
+        vector<int> cnt(nums.size(), 1);
+        for (int i = 0; i < nums.size(); i++) {
+            for (int j = i + 1; j < nums.size(); j++) {
+                if (nums[j] > nums[i] && (1 + dp1[i]) > dp1[j]) {
+                    dp1[j] = 1 + dp1[i];
+                    cnt[j] = cnt[i];
+                } else if ((1 + dp1[i]) == dp1[j]) {
+                    cnt[j] += cnt[i];
+                }
             }
-            maxi = max(maxi, dp[i]);
         }
         int ans = 0;
-        for (int i = 0; i < arr.size(); i++) {
-            if (dp[i] == maxi)
+        int maxlen = *max_element(dp1.begin(), dp1.end());
+        for (int i = 0; i < dp1.size(); i++) {
+            if (dp1[i] == maxlen)
                 ans += cnt[i];
         }
         return ans;
