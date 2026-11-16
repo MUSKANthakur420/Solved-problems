@@ -1,44 +1,48 @@
 class Solution {
 public:
-    bool parseBoolExpr(string exp) {
-        stack<char> st;
-        for (int i = 0; i < exp.size();) {
-            if (exp[i] == ',') {
+    bool parseBoolExpr(string s) {
+        stack<int> st;
+        for (int i = 0; i < s.size();) {
+            if (s[i] == ',') {
                 i++;
-                // continue;
             }
-            if (exp[i] != ')') {
-                st.push(exp[i]);
+            if (i < s.size() && s[i] != ')') {
+                st.push(s[i]);
                 i++;
-                // continue;
-            } else {
-                bool final = false;
-                string form = "";
+            }
+            if (i < s.size() && s[i] == ')') {
+                bool t = 0, f = 0;
                 while (!st.empty() && st.top() != '(') {
-                    form += st.top();
+                    if (st.top() == 't')
+                        t = 1;
+                    if (st.top() == 'f')
+                        f = 1;
                     st.pop();
                 }
+                i++;
                 st.pop();
                 char op = st.top();
                 st.pop();
-                if (op == '&') {
-                    final = true;
-                    for (auto it : form) {
-                        final = final & (it == 'f' ? false : true);
-                    }
-                } else if (op == '|') {
-                    for (auto it : form) {
-                        final = final | (it == 'f' ? false : true);
-                    }
-                } else {
-                    for (auto it : form) {
-                        final = !(it == 'f' ? false : true);
-                    }
+                if (op == '|') {
+                    if (t)
+                        st.push('t');
+                    else
+                        st.push('f');
                 }
-                st.push(final ? 't' : 'f');
-                i++;
+                if (op == '&') {
+                    if (t && !f)
+                        st.push('t');
+                    else
+                        st.push('f');
+                }
+                if (op == '!') {
+                    if (t)
+                        st.push('f');
+                    else
+                        st.push('t');
+                }
             }
         }
-        return st.top() == 't';
+        return (st.top() == 't') ? true : false;
     }
 };
