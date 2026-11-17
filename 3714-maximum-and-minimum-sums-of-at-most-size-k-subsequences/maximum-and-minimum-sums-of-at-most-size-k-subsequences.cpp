@@ -1,52 +1,50 @@
 #define mod 1000000007
 class Solution {
 public:
-    long long power(long long a, long long b) {
-        long long ans = 1;
-
-        while (b > 0) {
-            if (b & 1)
-                ans = ans * a % mod;
-
-            a = a * a % mod;
-            b >>= 1;
+    vector<long long> fact;
+    vector<long long> invfact;
+    long long solve(long long a) {
+        if (a == 1)
+            return 1;
+        if (fact[a] != 0)
+            return fact[a];
+        return fact[a] = 1LL * a % mod * solve(a - 1) % mod;
+    }
+    long long power(long long base, long long exp) {
+        long long res = 1;
+        base %= mod;
+        while (exp > 0) {
+            if (exp % 2 == 1)
+                res = (res * base) % mod;
+            base = (base * base) % mod;
+            exp /= 2;
         }
-
-        return ans;
+        return res;
     }
-    void inverse(vector<long long>& inv) {
-        int n = inv.size() - 1;
-        inv[n] = power(inv[n], mod - 2);
-        for (int i = n; i >= 1; i--)
-            inv[i - 1] = 1LL * inv[i] * i % mod;
-    }
-    void cal(vector<long long>& facto) {
-        for (int i = 1; i < facto.size(); i++)
-            facto[i] = (1LL * i % mod * facto[i - 1] % mod) % mod;
-    }
-    long long give(vector<long long>& facto, vector<long long>& inv, int n,
-                   int r) {
+    long long give(int n, int r) {
         if (r > n)
             return 0;
-        return 1LL * facto[n] * inv[n - r] % mod * inv[r] % mod;
+        return (1LL * fact[n] % mod * invfact[n - r] % mod * invfact[r] % mod) %
+               mod;
     }
     int minMaxSums(vector<int>& nums, int k) {
-        int maxi = *max_element(nums.begin(), nums.end());
-        vector<long long> facto(nums.size() + 1, 1);
-        vector<long long> inv(nums.size() + 1, 1);
-        int n = nums.size();
-        cal(facto);
-        inv[n] = facto[n];
-        inverse(inv);
         sort(nums.begin(), nums.end());
-        int ans = 0;
+        int n = nums.size();
+        fact.assign(nums.size() + 1, 0);
+        fact[1] = 1;
+        fact[0] = 1;
+        invfact.assign(nums.size() + 1, 0);
+        solve(n);
+        invfact[n] = power(fact[n], mod - 2);
+        for (int i = n - 1; i >= 0; i--) {
+            invfact[i] = (invfact[i + 1] * (i + 1)) % mod;
+        }
+        long long ans = 0;
         for (int i = 0; i < nums.size(); i++) {
-            for (int size = 1; size <= k; size++) {
-                long long mini = 1LL * nums[i] % mod *
-                                 give(facto, inv, n - i - 1, size - 1) % mod;
-                long long maxi =
-                    1LL * nums[i] % mod * give(facto, inv, i, size - 1) % mod;
-                ans = (ans % mod + mini % mod + maxi % mod) % mod;
+            for (int j = 0; j < k; j++) {
+                long long mini = 1LL * nums[i] * give(i, j) % mod;
+                long long maxi = 1LL * nums[i] * give(n - i - 1, j) % mod;
+                ans = (ans + maxi + mini) % mod;
             }
         }
         return ans;
