@@ -1,40 +1,37 @@
 class Solution {
 public:
-    vector<int> prefix;
-    vector<vector<int>> dp, hp;
-    int h(int i, int k, int m, int n) {
-        if (i > n)
-            return -1e9;
-        if (hp[i][k] != -1e9)
-            return hp[i][k];
-        int ans = h(i + 1, k, m, n);
-        int next = solve(i, k - 1, m, n);
-        if (next != -1e9)
-            ans = max(ans, prefix[i] + next);
-        return hp[i][k] = ans;
-    }
-    int solve(int indx, int k, int m, int n) {
-        if (k == 0)
-            return 0;
-        if ((n - indx) < k * m)
-            return -1e9;
-        if (dp[indx][k] != -1e9)
-            return dp[indx][k];
-        int ans = solve(indx + 1, k, m, n);
-        if (indx + m <= n) {
-            int best = h(indx + m, k, m, n);
-            if (best != -1e9)
-                ans = max(ans, best - prefix[indx]);
-        }
-        return dp[indx][k] = ans;
-    }
-    int maxSum(vector<int>& nums, int k, int m) {
+    int maxSum(vector<int>& nums, int K, int m) {
         int n = nums.size();
-        prefix.assign(n + 1, 0);
+
+        vector<vector<int>> dp(n + 1, vector<int>(K + 1, -1e9));
+        vector<vector<int>> best(n + 1, vector<int>(K + 1, -1e9));
+
+        dp[0][0] = 0;
+
+        vector<int> prefix(n + 1, 0);
+
         for (int i = 0; i < n; i++)
             prefix[i + 1] = prefix[i] + nums[i];
-        dp.assign(n + 2, vector<int>(k + 1, -1e9));
-        hp.assign(n + 2, vector<int>(k + 1, -1e9));
-        return solve(0, k, m, n);
+
+        for (int i = 1; i <= n; i++) {
+            for (int k = 0; k <= K; k++) {
+
+                dp[i][k] = dp[i - 1][k];
+
+                if (k > 0) {
+                    best[i][k] = best[i - 1][k] + nums[i - 1];
+
+                    if (i >= m) {
+                        best[i][k] =
+                            max(best[i][k],
+                                dp[i - m][k - 1] + prefix[i] - prefix[i - m]);
+                    }
+
+                    dp[i][k] = max(dp[i][k], best[i][k]);
+                }
+            }
+        }
+
+        return dp[n][K];
     }
 };
